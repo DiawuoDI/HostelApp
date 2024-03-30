@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+generator erd{
+  provider = "prisma-erd-generator"
+  output = "../erd.png"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id        String   @id @default(uuid())
+  fullname  String
+  email     String   @unique
+  password  String
+  telephone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model student {
+  studentId   String       @id @default(uuid())
+  profile     String
+  fullname    String
+  email       String?
+  password    String
+  gender      String
+  level       Int
+  telephone   String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  department  String?
+  allocation  allocation?
+  hostel      hostel?      @relation(fields: [hostelId], references: [id])
+  hostelId    String?
+  roomRequest roomRequest?
+}
+
+model rooms {
+  id         String       @id @default(uuid())
+  roomNumder Int          @unique
+  status     status
+  capacity   Int   @default(4)
+  blockName  String
+  hostel     hostel?      @relation(fields: [hostelId], references: [id])
+  hostelId   String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  allocation allocation[]
+}
+
+model allocation {
+  id        String   @id @default(uuid())
+  student   student? @relation(fields: [studentId], references: [studentId])
+  studentId String   @unique
+  rooms     rooms?   @relation(fields: [roomsId], references: [id])
+  roomsId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model roomRequest {
+  id        String   @id @default(uuid())
+  student   student? @relation(fields: [studentId], references: [studentId])
+  studentId String?  @unique
+  status    options
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model hostel {
+  id       String    @id @default(uuid())
+  name     String
+  location String
+  rooms    rooms[]
+  student  student[]
+}
+
+enum status {
+  Vacant
+  Occupied
+  Partially_Occupied
+}
+
+enum options {
+  Rejected
+  Approved
+  Pending
+}

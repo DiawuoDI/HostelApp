@@ -1,0 +1,7 @@
+{
+    "logConfig": {
+        "logFolder": ".//logs//",
+        "logFile": "NodeWistonApp-%DATE%.log",
+        "logLevel": "error"
+    }
+}
