@@ -6,27 +6,28 @@ generator client {
 }
 generator erd{
   provider = "prisma-erd-generator"
-  output = "../erd.png"
+  output = "../prisma/erd.png"
 }
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model admin {
-  id        String   @id @default(uuid())
-  fullname  String
-  email     String   @unique
-  password  String
-  telephone String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+// model admin {
+//   id        String   @id @default(uuid())
+//   fullname  String
+//   email     String   @unique
+//   password  String
+//   telephone String?
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 
-model student {
+model STUDENT {
   studentId   String       @id @default(uuid())
   profile     String
   fullname    String
+  dateOfBirth String
   email       String?
   password    String
   gender      String
@@ -35,50 +36,50 @@ model student {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   department  String?
-  allocation  allocation?
-  hostel      hostel?      @relation(fields: [hostelId], references: [id])
-  hostelId    String?
-  roomRequest roomRequest?
+  allocation  ALLOCATION?
+  halll      HALL?      @relation(fields: [hallId], references: [id])
+  hallId    String?
+  roomRequest ROOM_REQUEST?
 }
 
-model rooms {
+model ROOMS {
   id         String       @id @default(uuid())
   roomNumder Int          @unique
   status     status
   capacity   Int   @default(4)
   blockName  String
-  hostel     hostel?      @relation(fields: [hostelId], references: [id])
-  hostelId   String?
+  hall     HALL?      @relation(fields: [hallId], references: [id])
+  hallId   String?
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
-  allocation allocation[]
+  allocation ALLOCATION[]
 }
 
-model allocation {
+model ALLOCATION {
   id        String   @id @default(uuid())
-  student   student? @relation(fields: [studentId], references: [studentId])
+  student   STUDENT? @relation(fields: [studentId], references: [studentId])
   studentId String   @unique
-  rooms     rooms?   @relation(fields: [roomsId], references: [id])
+  rooms     ROOMS?   @relation(fields: [roomsId], references: [id])
   roomsId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model roomRequest {
+model ROOM_REQUEST {
   id        String   @id @default(uuid())
-  student   student? @relation(fields: [studentId], references: [studentId])
+  student   STUDENT? @relation(fields: [studentId], references: [studentId])
   studentId String?  @unique
   status    options
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model hostel {
+model HALL {
   id       String    @id @default(uuid())
   name     String
   location String
-  rooms    rooms[]
-  student  student[]
+  rooms    ROOMS[]
+  student  STUDENT[]
 }
 
 enum status {
